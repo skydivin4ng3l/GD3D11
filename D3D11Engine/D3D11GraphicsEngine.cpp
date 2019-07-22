@@ -683,6 +683,14 @@ XRESULT D3D11GraphicsEngine::OnBeginFrame()
 	case 3:
 		s = 4096;
 		break;
+
+	case 4:
+		s = 8192;
+		break;
+		
+	case 5:
+		s = 16384;
+		break;
 	}
 
 	if (WorldShadowmap1->GetSizeX() != s)

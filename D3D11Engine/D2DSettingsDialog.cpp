@@ -140,7 +140,7 @@ XRESULT D2DSettingsDialog::InitControls() {
 	shadowmapSizeSlider->AlignUnder(shadowmapSizeLabel, 5);
 	shadowmapSizeSlider->SetSliderChangedCallback(ShadowQualitySliderChanged, this);
 	shadowmapSizeSlider->SetIsIntegralSlider(true);
-	shadowmapSizeSlider->SetMinMax(1.0f, 4.0f);
+	shadowmapSizeSlider->SetMinMax(1.0f, 6.0f);
 
 	// Fix the shadow range
 	switch (Engine::GAPI->GetRendererState()->RendererSettings.ShadowMapSize) {
@@ -158,6 +158,14 @@ XRESULT D2DSettingsDialog::InitControls() {
 
 	case 4096:
 		shadowmapSizeSlider->SetValue(4);
+		break;
+
+	case 8192:
+		shadowmapSizeSlider->SetValue(5);
+		break;
+
+	case 16384:
+		shadowmapSizeSlider->SetValue(6);
 		break;
 	}
 
@@ -324,6 +332,15 @@ void D2DSettingsDialog::ShadowQualitySliderChanged(SV_Slider * sender, void * us
 	case 4:
 		Engine::GAPI->GetRendererState()->RendererSettings.ShadowMapSize = 4096;
 		break;
+
+	case 5:
+		Engine::GAPI->GetRendererState()->RendererSettings.ShadowMapSize = 8192;
+		break;
+
+	case 6:
+		Engine::GAPI->GetRendererState()->RendererSettings.ShadowMapSize = 16384;
+		break;
+		
 	}
 }
 

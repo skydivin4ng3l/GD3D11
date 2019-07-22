@@ -3881,6 +3881,14 @@ XRESULT GothicAPI::LoadMenuSettings(const std::string & file)
 	case 4096:
 		s.WorldShadowRangeScale = 4.0f;
 		break;
+
+	case 8192:
+		s.WorldShadowRangeScale = 4.0f;
+		break;
+
+	case 16384:
+		s.WorldShadowRangeScale = 4.0f;
+		break;
 	}
 
 	INT2 res;
