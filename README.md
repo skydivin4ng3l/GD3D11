@@ -1,4 +1,4 @@
-# GD3D11 [![Build status](https://ci.appveyor.com/api/projects/status/6svu1ma594tr06y9/branch/master?svg=true)](https://ci.appveyor.com/project/BonneCW/gd3d11)
+# GD3D11 [![Build status](https://ci.appveyor.com/api/projects/status/6svu1ma594tr06y9/branch/master?svg=true)](https://ci.appveyor.com/project/skydivin4ng3l/gd3d11)
 
 With this mod for the games "Gothic" and "Gothic 2", I want to bring the engine of those games into a more modern state. Through an own implementation of the DirectDraw-API and using hooking and assemblercode-modifications of gothics intern engine calls, I have managed to completely replace gothics old rendering architecture with a new one, which is able to utilize more of the current GPU generations power for rendering.
 Since Gothic's engine in its original state tries to cull as much as possible, this takes a lot of work from the CPU, which was slowing down the game even on todays processors. While the original renderer did a really great job with the tech from 2002, GPUs have grown much faster.
