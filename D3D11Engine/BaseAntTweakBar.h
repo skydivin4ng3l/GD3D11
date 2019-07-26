@@ -52,6 +52,9 @@ protected:
 	/** Called on "Apply"-Buttonpress */
 	static void TW_CALL ReloadShadersButtonCallback(void * clientData);
 
+	//** Called on "Save"-Buttonpress */
+	static void TW_CALL SaveSettingsButtonCallback(void * clientData);
+
 	/** Called on load ZEN resources */
 	static void TW_CALL LoadZENResourcesCallback(void * clientdata);
 
@@ -65,6 +68,7 @@ protected:
 	TwBar * Bar_Sky;
 
 	TwBar * Bar_General;
+	TwBar * Bar_Settings;
 
 	TwBar * Bar_Info;
 	TwBar * Bar_HBAO;

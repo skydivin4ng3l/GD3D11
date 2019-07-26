@@ -3800,12 +3800,14 @@ XRESULT GothicAPI::SaveMenuSettings(const std::string & file) {
 	fwrite(&s.EnableSoftShadows, sizeof(s.EnableSoftShadows), 1, f);
 	fwrite(&s.ShadowMapSize, sizeof(s.ShadowMapSize), 1, f);
 	fwrite(&s.WorldShadowRangeScale, sizeof(s.WorldShadowRangeScale), 1, f);
+	fwrite(&s.ShadowQualitySliderValue, sizeof(s.ShadowQualitySliderValue), 1, f);
 
 	INT2 res = Engine::GraphicsEngine->GetResolution();
 	fwrite(&res, sizeof(res), 1, f);
 
 	fwrite(&s.EnableHDR, sizeof(s.EnableHDR), 1, f);
 	fwrite(&s.EnableVSync, sizeof(s.EnableVSync), 1, f);
+	fwrite(&s.AtmosphericScattering, sizeof(s.AtmosphericScattering), 1, f);
 
 	fwrite(&s.OutdoorVobDrawRadius, sizeof(s.OutdoorVobDrawRadius), 1, f);
 	fwrite(&s.OutdoorSmallVobDrawRadius, sizeof(s.OutdoorSmallVobDrawRadius), 1, f);
@@ -3862,34 +3864,78 @@ XRESULT GothicAPI::LoadMenuSettings(const std::string & file)
 	fread(&s.EnableSoftShadows, sizeof(s.EnableSoftShadows), 1, f);
 	fread(&s.ShadowMapSize, sizeof(s.ShadowMapSize), 1, f);
 	fread(&s.WorldShadowRangeScale, sizeof(s.WorldShadowRangeScale), 1, f);
+	fread(&s.ShadowQualitySliderValue, sizeof(s.ShadowQualitySliderValue), 1, f);
 
-	// Fix the shadow range
-	switch(s.ShadowMapSize)
-	{
-	case 512:
-		s.WorldShadowRangeScale = 16.0f;
-		break;
+	// Fix the shadow Quality Slider depending on saved value
+	std::vector<float> preset_shadowRanges = { SHADOWRANGE_VERY_LOW, SHADOWRANGE_LOW, SHADOWRANGE_MEDIUM, SHADOWRANGE_HIGH, SHADOWRANGE_VERY_HIGH, SHADOWRANGE_ULTRA };
 
-	case 1024:
-		s.WorldShadowRangeScale = 16.0f;
-		break;
+	if (std::any_of(preset_shadowRanges.begin(), preset_shadowRanges.end(),
+		[](float preset_shadowRange) {
+		float epsilon = 0.001f;
+		float saved_shadowRange = Engine::GAPI->GetRendererState()->RendererSettings.WorldShadowRangeScale;
+		return std::fabsf(saved_shadowRange - preset_shadowRange) < epsilon; })) {
 
-	case 2048:
-		s.WorldShadowRangeScale = 8.0f;
-		break;
+		switch (s.ShadowMapSize) {
+		case 512:
+			s.ShadowQualitySliderValue = 1.0f;
+			break;
 
-	case 4096:
-		s.WorldShadowRangeScale = 4.0f;
-		break;
+		case 1024:
+			s.ShadowQualitySliderValue = 2.0f;
+			break;
 
-	case 8192:
-		s.WorldShadowRangeScale = 4.0f;
-		break;
+		case 2048:
+			s.ShadowQualitySliderValue = 3.0f;
+			break;
 
-	case 16384:
-		s.WorldShadowRangeScale = 4.0f;
-		break;
+		case 4096:
+			s.ShadowQualitySliderValue = 4.0f;
+			break;
+
+		case 8192:
+			s.ShadowQualitySliderValue = 5.0f;
+			break;
+
+		case 16384:
+			s.ShadowQualitySliderValue = 6.0f;
+			break;
+		}
 	}
+	else {
+		s.ShadowQualitySliderValue = 7.0f;
+	}
+
+	//acutal loading of saved Value,...fixing happening when shadowmap is changed in game.
+	//// Fix the shadow range
+	//switch(s.ShadowMapSize)
+	//{
+	//case 512:
+	//	s.WorldShadowRangeScale = 16.0f;
+	//	break;
+
+	//case 1024:
+	//	s.WorldShadowRangeScale = 16.0f;
+	//	break;
+
+	//case 2048:
+	//	s.WorldShadowRangeScale = 8.0f;
+	//	break;
+
+	//case 4096:
+	//	s.WorldShadowRangeScale = 4.0f;
+	//	break;
+
+	//case 8192:
+	//	s.WorldShadowRangeScale = 2.0f;
+	//	break;
+
+	//case 16384:
+	//	s.WorldShadowRangeScale = 1.5f;
+	//	break;
+	//}
+
+	// restoring of the slider
+
 
 	INT2 res;
 	fread(&res, sizeof(res), 1, f);
@@ -3908,6 +3954,7 @@ XRESULT GothicAPI::LoadMenuSettings(const std::string & file)
 	s.EnableHDR = false; // FIXME: Force HDR to off for now
 
 	fread(&s.EnableVSync, sizeof(s.EnableVSync), 1, f);
+	fread(&s.AtmosphericScattering, sizeof(s.AtmosphericScattering), 1, f);
 
 	fread(&s.OutdoorVobDrawRadius, sizeof(s.OutdoorVobDrawRadius), 1, f);
 	fread(&s.OutdoorSmallVobDrawRadius, sizeof(s.OutdoorSmallVobDrawRadius), 1, f);

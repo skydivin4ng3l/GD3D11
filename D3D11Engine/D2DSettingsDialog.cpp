@@ -10,7 +10,7 @@
 #include "SV_Slider.h"
 
 D2DSettingsDialog::D2DSettingsDialog(D2DView * view, D2DSubView * parent) : D2DDialog(view, parent) {
-	SetPositionCentered(D2D1::Point2F(view->GetRenderTarget()->GetSize().width / 2, view->GetRenderTarget()->GetSize().height / 2), D2D1::SizeF(500, 300));
+	SetPositionCentered(D2D1::Point2F(view->GetRenderTarget()->GetSize().width / 2, view->GetRenderTarget()->GetSize().height / 2), D2D1::SizeF(500, 340));
 	Header->SetCaption("Settings");
 
 	// Get display modes
@@ -35,12 +35,14 @@ D2DSettingsDialog::~D2DSettingsDialog() {
 XRESULT D2DSettingsDialog::InitControls() {
 	D2DSubView::InitControls();
 
-	AddButton("Close", CloseButtonPressed, this);
+	AddButton("Save and Close", CloseButtonPressed, this, 120.0f);
 	AddButton("[*] Apply", ApplyButtonPressed, this);
 
+	//First Collum
+	//Resolution
 	SV_Label * resolutionLabel = new SV_Label(MainView, MainPanel);
 	resolutionLabel->SetPositionAndSize(D2D1::Point2F(10, 10), D2D1::SizeF(150, 12));
-	resolutionLabel->AlignUnder(Header, 10);
+	resolutionLabel->AlignUnder(Header, 5);
 	resolutionLabel->SetCaption("Resolution [*]:");
 	resolutionLabel->SetPosition(D2D1::Point2F(5, resolutionLabel->GetPosition().y));
 
@@ -60,30 +62,25 @@ XRESULT D2DSettingsDialog::InitControls() {
 	resolutionSlider->SetDisplayValues(resStrings);
 	resolutionSlider->SetValue((float)ResolutionSetting);
 
+	//Normalmaps
 	SV_Checkbox * normalmapsCheckbox = new SV_Checkbox(MainView, MainPanel);
 	normalmapsCheckbox->SetSize(D2D1::SizeF(160, 20));
 	normalmapsCheckbox->SetCaption("Enable Normalmaps");
 	normalmapsCheckbox->SetDataToUpdate(&Engine::GAPI->GetRendererState()->RendererSettings.AllowNormalmaps);
-	normalmapsCheckbox->AlignUnder(normalmapsCheckbox, 5);
+	normalmapsCheckbox->AlignUnder(resolutionSlider, 8);
 	normalmapsCheckbox->SetPosition(D2D1::Point2F(5, normalmapsCheckbox->GetPosition().y));
 	normalmapsCheckbox->SetChecked(Engine::GAPI->GetRendererState()->RendererSettings.AllowNormalmaps);
 
-	SV_Checkbox * numpadCheckbox = new SV_Checkbox(MainView, MainPanel);
-	numpadCheckbox->SetSize(D2D1::SizeF(160, 20));
-	numpadCheckbox->SetCaption("Enable Numpad Keys");
-	numpadCheckbox->SetDataToUpdate(&Engine::GAPI->GetRendererState()->RendererSettings.AllowNumpadKeys);
-	numpadCheckbox->AlignUnder(resolutionSlider, 10);
-	numpadCheckbox->SetPosition(D2D1::Point2F(5, numpadCheckbox->GetPosition().y));
-	numpadCheckbox->SetChecked(Engine::GAPI->GetRendererState()->RendererSettings.AllowNumpadKeys);
-
+	//HBAO+
 	SV_Checkbox * hbaoCheckbox = new SV_Checkbox(MainView, MainPanel);
 	hbaoCheckbox->SetSize(D2D1::SizeF(160, 20));
 	hbaoCheckbox->SetCaption("Enable HBAO+");
 	hbaoCheckbox->SetDataToUpdate(&Engine::GAPI->GetRendererState()->RendererSettings.HbaoSettings.Enabled);
-	hbaoCheckbox->AlignUnder(numpadCheckbox, 5);
+	hbaoCheckbox->AlignUnder(normalmapsCheckbox, 5);
 	hbaoCheckbox->SetPosition(D2D1::Point2F(5, hbaoCheckbox->GetPosition().y));
 	hbaoCheckbox->SetChecked(Engine::GAPI->GetRendererState()->RendererSettings.HbaoSettings.Enabled);
 
+	//VSync
 	SV_Checkbox * vsyncCheckbox = new SV_Checkbox(MainView, MainPanel);
 	vsyncCheckbox->SetSize(D2D1::SizeF(160, 20));
 	vsyncCheckbox->SetCaption("Enable VSync");
@@ -91,6 +88,7 @@ XRESULT D2DSettingsDialog::InitControls() {
 	vsyncCheckbox->AlignUnder(hbaoCheckbox, 5);
 	vsyncCheckbox->SetChecked(Engine::GAPI->GetRendererState()->RendererSettings.EnableVSync);
 
+	//Godrays
 	SV_Checkbox * godraysCheckbox = new SV_Checkbox(MainView, MainPanel);
 	godraysCheckbox->SetSize(D2D1::SizeF(160, 20));
 	godraysCheckbox->SetCaption("Enable GodRays");
@@ -99,11 +97,21 @@ XRESULT D2DSettingsDialog::InitControls() {
 	godraysCheckbox->SetPosition(D2D1::Point2F(5, godraysCheckbox->GetPosition().y));
 	godraysCheckbox->SetChecked(Engine::GAPI->GetRendererState()->RendererSettings.EnableGodRays);
 
+	//Atmospheric Scattering
+	SV_Checkbox * AtmosphericScatteringCheckbox = new SV_Checkbox(MainView, MainPanel);
+	AtmosphericScatteringCheckbox->SetSize(D2D1::SizeF(160, 20));
+	AtmosphericScatteringCheckbox->SetCaption("Enable Atmospheric Scattering");
+	AtmosphericScatteringCheckbox->SetDataToUpdate(&Engine::GAPI->GetRendererState()->RendererSettings.AtmosphericScattering);
+	AtmosphericScatteringCheckbox->AlignUnder(godraysCheckbox, 12);
+	AtmosphericScatteringCheckbox->SetPosition(D2D1::Point2F(5, AtmosphericScatteringCheckbox->GetPosition().y));
+	AtmosphericScatteringCheckbox->SetChecked(Engine::GAPI->GetRendererState()->RendererSettings.AtmosphericScattering);
+
+	//SMAA
 	SV_Checkbox * smaaCheckbox = new SV_Checkbox(MainView, MainPanel);
 	smaaCheckbox->SetSize(D2D1::SizeF(160, 20));
 	smaaCheckbox->SetCaption("Enable SMAA");
 	smaaCheckbox->SetDataToUpdate(&Engine::GAPI->GetRendererState()->RendererSettings.EnableSMAA);
-	smaaCheckbox->AlignUnder(godraysCheckbox, 5);
+	smaaCheckbox->AlignUnder(AtmosphericScatteringCheckbox, 12);
 	smaaCheckbox->SetPosition(D2D1::Point2F(5, smaaCheckbox->GetPosition().y));
 	smaaCheckbox->SetChecked(Engine::GAPI->GetRendererState()->RendererSettings.EnableSMAA);
 
@@ -115,6 +123,7 @@ XRESULT D2DSettingsDialog::InitControls() {
 	tesselationCheckbox->SetPosition(D2D1::Point2F(5, tesselationCheckbox->GetPosition().y));
 	tesselationCheckbox->SetChecked(Engine::GAPI->GetRendererState()->RendererSettings.EnableTesselation);*/
 
+	//Enable Shadows
 	SV_Checkbox * shadowsCheckbox = new SV_Checkbox(MainView, MainPanel);
 	shadowsCheckbox->SetSize(D2D1::SizeF(160, 20));
 	shadowsCheckbox->SetCaption("Enable Shadows[*]");
@@ -123,6 +132,7 @@ XRESULT D2DSettingsDialog::InitControls() {
 	shadowsCheckbox->SetPosition(D2D1::Point2F(5, shadowsCheckbox->GetPosition().y));
 	shadowsCheckbox->SetChecked(Engine::GAPI->GetRendererState()->RendererSettings.EnableShadows);
 
+	//Shadow Filtering
 	SV_Checkbox * filterShadowsCheckbox = new SV_Checkbox(MainView, MainPanel);
 	filterShadowsCheckbox->SetSize(D2D1::SizeF(160, 20));
 	filterShadowsCheckbox->SetCaption("Shadow Filtering [*]");
@@ -130,44 +140,60 @@ XRESULT D2DSettingsDialog::InitControls() {
 	filterShadowsCheckbox->AlignUnder(shadowsCheckbox, 5);
 	filterShadowsCheckbox->SetChecked(Engine::GAPI->GetRendererState()->RendererSettings.EnableSoftShadows);
 
-	SV_Label * shadowmapSizeLabel = new SV_Label(MainView, MainPanel);
-	shadowmapSizeLabel->SetPositionAndSize(D2D1::Point2F(10, 10), D2D1::SizeF(150, 12));
-	shadowmapSizeLabel->AlignUnder(filterShadowsCheckbox, 10);
-	shadowmapSizeLabel->SetCaption("Shadow Quality:");
+	//Shadow Quality
+	SV_Label * ShadowQualityLabel = new SV_Label(MainView, MainPanel);
+	ShadowQualityLabel->SetPositionAndSize(D2D1::Point2F(10, 10), D2D1::SizeF(150, 12));
+	ShadowQualityLabel->AlignUnder(filterShadowsCheckbox, 10);
+	ShadowQualityLabel->SetCaption("Shadow Quality:");
 
-	SV_Slider * shadowmapSizeSlider = new SV_Slider(MainView, MainPanel);
-	shadowmapSizeSlider->SetPositionAndSize(D2D1::Point2F(10, 22), D2D1::SizeF(150, 15));
-	shadowmapSizeSlider->AlignUnder(shadowmapSizeLabel, 5);
-	shadowmapSizeSlider->SetSliderChangedCallback(ShadowQualitySliderChanged, this);
-	shadowmapSizeSlider->SetIsIntegralSlider(true);
-	shadowmapSizeSlider->SetMinMax(1.0f, 6.0f);
+	SV_Slider * ShadowQualitySlider = new SV_Slider(MainView, MainPanel);
+	ShadowQualitySlider->SetPositionAndSize(D2D1::Point2F(10, 22), D2D1::SizeF(150, 15));
+	ShadowQualitySlider->AlignUnder(ShadowQualityLabel, 5);
+	ShadowQualitySlider->SetDataToUpdate(&Engine::GAPI->GetRendererState()->RendererSettings.ShadowQualitySliderValue);
+	ShadowQualitySlider->SetSliderChangedCallback(ShadowQualitySliderChanged, this);
+	ShadowQualitySlider->SetIsIntegralSlider(true);
+	ShadowQualitySlider->SetMinMax(1.0f, 7.0f);
+	ShadowQualitySlider->SetDisplayValues({ "Low", "Low", "Medium", "High", "Very High", "Ultra", "Extreme","Custom" });
+	ShadowQualitySlider->SetValue(Engine::GAPI->GetRendererState()->RendererSettings.ShadowQualitySliderValue);
+	
+	//// Fix the shadow Quality Slider depending on saved value
+	//std::vector<float> preset_shadowRanges = { SHADOWRANGE_VERY_LOW, SHADOWRANGE_LOW, SHADOWRANGE_MEDIUM, SHADOWRANGE_HIGH, SHADOWRANGE_VERY_HIGH, SHADOWRANGE_ULTRA };
+	//
+	//if (std::any_of(preset_shadowRanges.begin(), preset_shadowRanges.end(), 
+	//	[](float preset_shadowRange) {
+	//		float epsilon = 0.001f;
+	//		return std::fabsf(Engine::GAPI->GetRendererState()->RendererSettings.WorldShadowRangeScale - preset_shadowRange) < epsilon; }) ) {
+	//	
+	//	switch (Engine::GAPI->GetRendererState()->RendererSettings.ShadowMapSize) {
+	//	case 512:
+	//		ShadowQualitySlider->SetValue(1.0f);
+	//		break;
 
-	// Fix the shadow range
-	switch (Engine::GAPI->GetRendererState()->RendererSettings.ShadowMapSize) {
-	case 512:
-		shadowmapSizeSlider->SetValue(1);
-		break;
+	//	case 1024:
+	//		ShadowQualitySlider->SetValue(2.0f);
+	//		break;
 
-	case 1024:
-		shadowmapSizeSlider->SetValue(2);
-		break;
+	//	case 2048:
+	//		ShadowQualitySlider->SetValue(3.0f);
+	//		break;
 
-	case 2048:
-		shadowmapSizeSlider->SetValue(3);
-		break;
+	//	case 4096:
+	//		ShadowQualitySlider->SetValue(4.0f);
+	//		break;
 
-	case 4096:
-		shadowmapSizeSlider->SetValue(4);
-		break;
+	//	case 8192:
+	//		ShadowQualitySlider->SetValue(5.0f);
+	//		break;
 
-	case 8192:
-		shadowmapSizeSlider->SetValue(5);
-		break;
-
-	case 16384:
-		shadowmapSizeSlider->SetValue(6);
-		break;
-	}
+	//	case 16384:
+	//		ShadowQualitySlider->SetValue(6.0f);
+	//		break;
+	//	}
+	//}
+	//else {
+	//	ShadowQualitySlider->SetValue(7.0f);
+	//}
+	
 
 	// Next column
 	/*SV_Checkbox* hdrCheckbox = new SV_Checkbox(MainView, MainPanel);
@@ -178,6 +204,8 @@ XRESULT D2DSettingsDialog::InitControls() {
 	hdrCheckbox->SetPosition(D2D1::Point2F(170, hdrCheckbox->GetPosition().y));
 	hdrCheckbox->SetChecked(Engine::GAPI->GetRendererState()->RendererSettings.EnableHDR);*/
 
+	//Second Collum
+	//Object draw distance
 	SV_Label * outdoorVobsDDLabel = new SV_Label(MainView, MainPanel);
 	outdoorVobsDDLabel->SetPositionAndSize(D2D1::Point2F(10, 10), D2D1::SizeF(150, 12));
 	outdoorVobsDDLabel->AlignUnder(Header, 5);
@@ -193,6 +221,7 @@ XRESULT D2DSettingsDialog::InitControls() {
 	outdoorVobsDDSlider->SetMinMax(0.0f, 99999.0f);
 	outdoorVobsDDSlider->SetValue(Engine::GAPI->GetRendererState()->RendererSettings.OutdoorVobDrawRadius);
 
+	//Small object draw distance
 	SV_Label * outdoorVobsSmallDDLabel = new SV_Label(MainView, MainPanel);
 	outdoorVobsSmallDDLabel->SetPositionAndSize(D2D1::Point2F(10, 10), D2D1::SizeF(150, 12));
 	outdoorVobsSmallDDLabel->AlignUnder(outdoorVobsDDSlider, 8);
@@ -207,6 +236,7 @@ XRESULT D2DSettingsDialog::InitControls() {
 	outdoorVobsSmallDDSlider->SetMinMax(0.0f, 99999.0f);
 	outdoorVobsSmallDDSlider->SetValue(Engine::GAPI->GetRendererState()->RendererSettings.OutdoorSmallVobDrawRadius);
 
+	//VisualFX draw distance
 	SV_Label * visualFXDDLabel = new SV_Label(MainView, MainPanel);
 	visualFXDDLabel->SetPositionAndSize(D2D1::Point2F(10, 10), D2D1::SizeF(150, 12));
 	visualFXDDLabel->AlignUnder(outdoorVobsSmallDDSlider, 8);
@@ -221,6 +251,7 @@ XRESULT D2DSettingsDialog::InitControls() {
 	visualFXDDSlider->SetMinMax(0.0f, 10000.0f);
 	visualFXDDSlider->SetValue(Engine::GAPI->GetRendererState()->RendererSettings.VisualFXDrawRadius);
 
+	//World draw distance
 	SV_Label * worldDDLabel = new SV_Label(MainView, MainPanel);
 	worldDDLabel->SetPositionAndSize(D2D1::Point2F(10, 10), D2D1::SizeF(150, 12));
 	worldDDLabel->AlignUnder(visualFXDDSlider, 8);
@@ -233,7 +264,8 @@ XRESULT D2DSettingsDialog::InitControls() {
 	worldDDSlider->SetIsIntegralSlider(true);
 	worldDDSlider->SetMinMax(1.0f, 10.0f);
 	worldDDSlider->SetValue((float)Engine::GAPI->GetRendererState()->RendererSettings.SectionDrawRadius);
-
+	
+	//Dynamic Shadow
 	SV_Label * dynShadowLabel = new SV_Label(MainView, MainPanel);
 	dynShadowLabel->SetPositionAndSize(D2D1::Point2F(10, 10), D2D1::SizeF(150, 12));
 	dynShadowLabel->AlignUnder(worldDDSlider, 8);
@@ -282,6 +314,7 @@ XRESULT D2DSettingsDialog::InitControls() {
 	vertFOVSlider->SetMinMax(40.0f, 150.0f);
 	vertFOVSlider->SetValue(Engine::GAPI->GetRendererState()->RendererSettings.FOVVert);
 
+	//Bightness
 	SV_Label * brightnessLabel = new SV_Label(MainView, MainPanel);
 	brightnessLabel->SetPositionAndSize(D2D1::Point2F(10, 10), D2D1::SizeF(150, 12));
 	brightnessLabel->AlignUnder(vertFOVSlider, 8);
@@ -294,6 +327,7 @@ XRESULT D2DSettingsDialog::InitControls() {
 	brightnessSlider->SetMinMax(0.1f, 3.0f);
 	brightnessSlider->SetValue(Engine::GAPI->GetRendererState()->RendererSettings.BrightnessValue);
 
+	//Contrast
 	SV_Label * contrastLabel = new SV_Label(MainView, MainPanel);
 	contrastLabel->SetPositionAndSize(D2D1::Point2F(10, 10), D2D1::SizeF(150, 12));
 	contrastLabel->AlignUnder(brightnessSlider, 8);
@@ -306,10 +340,19 @@ XRESULT D2DSettingsDialog::InitControls() {
 	contrastSlider->SetMinMax(0.1f, 2.0f);
 	contrastSlider->SetValue(Engine::GAPI->GetRendererState()->RendererSettings.GammaValue);
 
+	//Numpad
+	SV_Checkbox * numpadCheckbox = new SV_Checkbox(MainView, MainPanel);
+	numpadCheckbox->SetPositionAndSize(D2D1::Point2F(10, 10), D2D1::SizeF(160, 20));
+	numpadCheckbox->SetCaption("Enable Numpad Keys");
+	numpadCheckbox->SetDataToUpdate(&Engine::GAPI->GetRendererState()->RendererSettings.AllowNumpadKeys);
+	//numpadCheckbox->AlignUnder(contrastSlider, 22);
+	numpadCheckbox->AlignRightTo(dynShadowSlider, 20);
+	numpadCheckbox->SetChecked(Engine::GAPI->GetRendererState()->RendererSettings.AllowNumpadKeys);
+
 	// Advanced settings label
 	SV_Label * advancedSettingsLabel = new SV_Label(MainView, MainPanel);
-	advancedSettingsLabel->SetPositionAndSize(D2D1::Point2F(5, GetSize().height - 5 - 12), D2D1::SizeF(200, 12));
-	advancedSettingsLabel->SetCaption("CTRL + F11 -> Advanced");
+	advancedSettingsLabel->SetPositionAndSize(D2D1::Point2F(5, GetSize().height - 5 - 40), D2D1::SizeF(200, 24));
+	advancedSettingsLabel->SetCaption("CTRL + F11 -> Advanced  --- Changes 'there' won't be reflected 'here' until restart, if saved 'there'");
 
 	return XR_SUCCESS;
 }
@@ -318,29 +361,44 @@ XRESULT D2DSettingsDialog::InitControls() {
 void D2DSettingsDialog::ShadowQualitySliderChanged(SV_Slider * sender, void * userdata) {
 	switch ((int)(sender->GetValue() + 0.5f)) {
 	case 1:
+		//Engine::GAPI->GetRendererState()->RendererSettings.ShadowQualitySliderValue = 1.0f; //maybe these can be done via SetDataToUpdate unsure about roundings.
 		Engine::GAPI->GetRendererState()->RendererSettings.ShadowMapSize = 512;
+		Engine::GAPI->GetRendererState()->RendererSettings.WorldShadowRangeScale = SHADOWRANGE_VERY_LOW;
 		break;
 
 	case 2:
+		//Engine::GAPI->GetRendererState()->RendererSettings.ShadowQualitySliderValue = 2.0f;
 		Engine::GAPI->GetRendererState()->RendererSettings.ShadowMapSize = 1024;
+		Engine::GAPI->GetRendererState()->RendererSettings.WorldShadowRangeScale = SHADOWRANGE_LOW;
 		break;
 
 	case 3:
+		//Engine::GAPI->GetRendererState()->RendererSettings.ShadowQualitySliderValue = 3.0f;
 		Engine::GAPI->GetRendererState()->RendererSettings.ShadowMapSize = 2048;
+		Engine::GAPI->GetRendererState()->RendererSettings.WorldShadowRangeScale = SHADOWRANGE_MEDIUM;
 		break;
 
 	case 4:
+		//Engine::GAPI->GetRendererState()->RendererSettings.ShadowQualitySliderValue = 4.0f;
 		Engine::GAPI->GetRendererState()->RendererSettings.ShadowMapSize = 4096;
+		Engine::GAPI->GetRendererState()->RendererSettings.WorldShadowRangeScale = SHADOWRANGE_HIGH;
 		break;
 
 	case 5:
+		//Engine::GAPI->GetRendererState()->RendererSettings.ShadowQualitySliderValue = 5.0f;
 		Engine::GAPI->GetRendererState()->RendererSettings.ShadowMapSize = 8192;
+		Engine::GAPI->GetRendererState()->RendererSettings.WorldShadowRangeScale = SHADOWRANGE_VERY_HIGH;
 		break;
 
 	case 6:
+		//Engine::GAPI->GetRendererState()->RendererSettings.ShadowQualitySliderValue = 6.0f;
 		Engine::GAPI->GetRendererState()->RendererSettings.ShadowMapSize = 16384;
+		Engine::GAPI->GetRendererState()->RendererSettings.WorldShadowRangeScale = SHADOWRANGE_ULTRA;
 		break;
 		
+	case 7:
+		//Engine::GAPI->GetRendererState()->RendererSettings.ShadowQualitySliderValue = 7.0f;
+		break;
 	}
 }
 

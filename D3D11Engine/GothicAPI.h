@@ -8,6 +8,13 @@
 #define START_TIMING Engine::GAPI->GetRendererState()->RendererInfo.Timing.Start
 #define STOP_TIMING Engine::GAPI->GetRendererState()->RendererInfo.Timing.Stop
 
+#define SHADOWRANGE_VERY_LOW 16.0f
+#define SHADOWRANGE_LOW 16.0f
+#define SHADOWRANGE_MEDIUM 8.0f
+#define SHADOWRANGE_HIGH 4.0f
+#define SHADOWRANGE_VERY_HIGH 3.0f
+#define SHADOWRANGE_ULTRA 1.5f
+
 static const char* MENU_SETTINGS_FILE = "system\\GD3D11\\UserSettings.bin";
 const float INDOOR_LIGHT_DISTANCE_SCALE_FACTOR = 0.5f;
 

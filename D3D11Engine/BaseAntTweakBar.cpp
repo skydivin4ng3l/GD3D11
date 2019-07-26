@@ -21,6 +21,12 @@ BaseAntTweakBar::~BaseAntTweakBar() {
 
 /** Creates the resources */
 XRESULT BaseAntTweakBar::Init() {
+	/** --- Save Dialog --- */
+	Bar_Settings = TwNewBar("Settings");
+	TwDefine("Settings position='200 0'");
+
+	TwAddButton(Bar_Settings, "Save Settings", (TwButtonCallback)SaveSettingsButtonCallback, this, nullptr);
+
 	// Sky
 	Bar_Sky = TwNewBar("Sky");
 	TwDefine(" Sky position='400 0'");
@@ -188,7 +194,7 @@ XRESULT BaseAntTweakBar::Init() {
 	TwAddVarRW(Bar_General, "RainFogColor", TW_TYPE_COLOR3F, &Engine::GAPI->GetRendererState()->RendererSettings.RainFogColor, nullptr);
 
 	//TwAddVarRW(Bar_General, "SmallVobSize", TW_TYPE_FLOAT, &Engine::GAPI->GetRendererState()->RendererSettings.SmallVobSize, nullptr);
-	//TwAddVarRW(Bar_General, "AtmosphericScattering", TW_TYPE_BOOLCPP, &Engine::GAPI->GetRendererState()->RendererSettings.AtmosphericScattering, nullptr);
+	//TwAddVarRW(Bar_General, "AtmosphericScattering", TW_TYPE_BOOLCPP, &Engine::GAPI->GetRendererState()->RendererSettings.AtmosphericScattering, nullptr); //added again`?
 
 	TwAddVarRW(Bar_General, "FogGlobalDensity", TW_TYPE_FLOAT, &Engine::GAPI->GetRendererState()->RendererSettings.FogGlobalDensity, nullptr);
 	TwDefine(" General/FogGlobalDensity  step=0.00001 min=0");
@@ -273,10 +279,11 @@ XRESULT BaseAntTweakBar::Init() {
 	TwAddVarRO(Bar_Info, "SC_SamplerState,", TW_TYPE_UINT32,	&Engine::GAPI->GetRendererState()->RendererInfo.StateChangesByState[GothicRendererInfo::SC_SMPL], nullptr);
 	TwAddVarRO(Bar_Info, "SC_BlendState,", TW_TYPE_UINT32,		&Engine::GAPI->GetRendererState()->RendererInfo.StateChangesByState[GothicRendererInfo::SC_BS], nullptr);
 
+	/** --- hbao  --- */	
 	Bar_HBAO = TwNewBar("HBAO+");
 	TwDefine(" HBAO+ position='1000 0'");
 	
-	/** --- hbao  --- */	
+	
 	TwAddVarRW(Bar_HBAO, "Enable HBAO+", TW_TYPE_BOOLCPP, &Engine::GAPI->GetRendererState()->RendererSettings.HbaoSettings.Enabled, nullptr);
 
 	TwAddVarRW(Bar_HBAO, "Radius", TW_TYPE_FLOAT, &Engine::GAPI->GetRendererState()->RendererSettings.HbaoSettings.Radius, nullptr);
@@ -473,6 +480,11 @@ void BaseAntTweakBar::SetPreferredTextureForSettings(const std::string & texture
 
 void TW_CALL BaseAntTweakBar::ReloadShadersButtonCallback(void * clientData) { 
     Engine::GraphicsEngine->ReloadShaders();
+}
+
+/** Saves the settings */
+void TW_CALL BaseAntTweakBar::SaveSettingsButtonCallback(void * clientData) {
+	Engine::GAPI->SaveMenuSettings(MENU_SETTINGS_FILE);
 }
 
 void TW_CALL BaseAntTweakBar::SaveZENResourcesCallback(void * clientData) { 

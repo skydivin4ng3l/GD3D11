@@ -140,7 +140,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
-      <AdditionalLibraryDirectories>$(WindowsSDK_LibraryPath_x86);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR);$(WindowsSDK_LibraryPath_x86)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuildStep>
       <Command>copy "shaders\*.*" "$(G2_SYSTEM_PATH)\GD3D11\shaders\"

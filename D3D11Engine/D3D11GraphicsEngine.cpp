@@ -665,7 +665,6 @@ XRESULT D3D11GraphicsEngine::OnBeginFrame()
 
 	// Check for shadowmap resize
 	int s = Engine::GAPI->GetRendererState()->RendererSettings.ShadowMapSize;
-	float r = 0;
 	switch(s)
 	{
 	case 0:
@@ -700,7 +699,9 @@ XRESULT D3D11GraphicsEngine::OnBeginFrame()
 		SAFE_DELETE(WorldShadowmap1);
 		WorldShadowmap1 = new RenderToDepthStencilBuffer(Device, s, s, DXGI_FORMAT_R32_TYPELESS, nullptr, DXGI_FORMAT_D32_FLOAT, DXGI_FORMAT_R32_FLOAT);
 
-		Engine::GAPI->GetRendererState()->RendererSettings.WorldShadowRangeScale *= old / (float)s;
+		//disabled the recalculation of Range based on the Mapsize, Range will only be automatically updated if changed by Shadow Quality slider
+		//Engine::GAPI->GetRendererState()->RendererSettings.WorldShadowRangeScale *= old / (float)s;
+		
 	}
 
 	// Force the mode

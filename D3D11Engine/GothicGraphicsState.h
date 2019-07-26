@@ -483,6 +483,7 @@ struct GothicRendererSettings {
 
 		ShadowMapSize = 2048;
 		WorldShadowRangeScale = 8.0f;
+		ShadowQualitySliderValue = 3.0f;
 
 		ShadowStrength = 0.40f;
 		ShadowAOStrength = 0.50f;
@@ -624,6 +625,7 @@ struct GothicRendererSettings {
 	float GammaValue;
 	float BrightnessValue;
 	int ShadowMapSize;
+	float ShadowQualitySliderValue;
 
 	float GlobalWindStrength;
 	float FogGlobalDensity;
